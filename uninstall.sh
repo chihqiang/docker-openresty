@@ -24,7 +24,7 @@ echo "[*] 检测结果：$OS_ID $OS_VER_ID ($ARCH)"
 
 uninstall_openresty_debian_ubuntu() {
     echo "[*] 卸载 OpenResty 及其组件..."
-    sudo apt-get remove --purge -y openresty openresty-resty openresty-opm || true
+    sudo apt-get remove --purge -y openresty openresty-resty || true
     sudo apt-get autoremove -y
 
     echo "[*] 移除 OpenResty APT 源..."
@@ -40,7 +40,7 @@ uninstall_openresty_debian_ubuntu() {
 
 uninstall_openresty_centos_rhel() {
     echo "[*] 卸载 OpenResty..."
-    sudo yum remove -y openresty openresty-resty openresty-opm || true
+    sudo yum remove -y openresty openresty-resty || true
 
     echo "[*] 移除 OpenResty YUM 源..."
     sudo rm -f /etc/yum.repos.d/openresty.repo

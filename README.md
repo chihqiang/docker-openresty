@@ -1,3 +1,9 @@
+# 宿主安装/卸载
+~~~
+curl -sSL https://raw.githubusercontent.com/chihqiang/docker-openresty/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/chihqiang/docker-openresty/main/uninstall.sh | bash
+~~~
+
 # alpine
 ~~~~
 docker build -t  zhiqiangwang/openresty:latest  .

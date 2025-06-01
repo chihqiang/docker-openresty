@@ -1,8 +1,15 @@
 #!/bin/bash
-
 set -e
 
-# https://openresty.org/cn/linux-packages.html
+# ===============================================================
+# 🚀 OpenResty 一键安装脚本（支持 Ubuntu / Debian / CentOS / RHEL）
+#
+# 👉 使用方式（直接运行）：
+#       curl -o- https://raw.githubusercontent.com/chihqiang/docker-openresty/main/install.sh | bash
+#
+# 📌 作者：zhiqiang
+# 📅 更新时间：2025-05-15
+# ===============================================================
 
 echo "[*] 正在检测系统..."
 
@@ -24,24 +31,29 @@ esac
 
 echo "[*] 检测结果：$OS_ID $OS_VER_ID ($ARCH)"
 
-install_openresty_ubuntu() {
-    echo "[*] 安装依赖..."
-    sudo apt-get -y install wget gnupg ca-certificates lsb-release
-
+import_openresty_gpg() {
     echo "[*] 导入 GPG 公钥..."
-    if [ "$OS_VER_ID" -ge 22 ]; then
+    if { [ "$OS_ID" = "ubuntu" ] && [ "$OS_VER_ID" -ge 22 ]; } || \
+       { [ "$OS_ID" = "debian" ] && [ "$OS_VER_ID" -ge 12 ]; }; then
         if [ ! -f /etc/apt/trusted.gpg.d/openresty.gpg ]; then
             wget -O - https://openresty.org/package/pubkey.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/openresty.gpg
         else
             echo "[i] GPG 公钥已存在，跳过导入"
         fi
     else
-        if ! apt-key list | grep -q "openresty"; then
+        if ! apt-key list 2>/dev/null | grep -q "openresty"; then
             wget -O - https://openresty.org/package/pubkey.gpg | sudo apt-key add -
         else
             echo "[i] apt-key 已包含 openresty 公钥"
         fi
     fi
+}
+
+install_openresty_ubuntu() {
+    echo "[*] 安装依赖..."
+    sudo apt-get -y install wget gnupg ca-certificates lsb-release
+
+    import_openresty_gpg
 
     echo "[*] 添加 APT 源..."
     codename=$(lsb_release -sc)
@@ -62,30 +74,16 @@ install_openresty_ubuntu() {
     sudo apt-get -y install openresty
 }
 
-
-
 install_openresty_debian() {
     echo "[*] 安装依赖..."
     sudo apt-get -y install wget gnupg ca-certificates lsb-release
 
-    echo "[*] 导入 GPG 公钥..."
-    if [ "$OS_VER_ID" -ge 12 ]; then
-        if [ ! -f /etc/apt/trusted.gpg.d/openresty.gpg ]; then
-            wget -O - https://openresty.org/package/pubkey.gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/openresty.gpg
-        else
-            echo "[i] GPG 公钥已存在，跳过导入"
-        fi
-    else
-        if ! apt-key list | grep -q "openresty"; then
-            wget -O - https://openresty.org/package/pubkey.gpg | sudo apt-key add -
-        else
-            echo "[i] apt-key 已包含 openresty 公钥"
-        fi
-    fi
+    import_openresty_gpg
 
     echo "[*] 添加 APT 源..."
     codename=$(grep -Po 'VERSION="[0-9]+ \(\K[^)]+' /etc/os-release)
     list_file="/etc/apt/sources.list.d/openresty.list"
+
     if [ ! -f "$list_file" ]; then
         if [ "$ARCH" = "arm64" ]; then
             echo "deb http://openresty.org/package/arm64/debian $codename openresty" | sudo tee "$list_file"
@@ -122,14 +120,16 @@ install_openresty_centos() {
     fi
 
     echo "[*] 检查更新并安装 OpenResty..."
-    sudo yum check-update
+    sudo yum check-update || true
     sudo yum install -y openresty
 }
 
 install_openresty_rhel() {
     echo "[*] 安装 wget 和依赖..."
     sudo yum install -y wget ca-certificates
+
     repo_file="/etc/yum.repos.d/openresty.repo"
+
     echo "[*] 添加 OpenResty RHEL 仓库..."
     if [ ! -f "$repo_file" ]; then
         if [ "$OS_VER_ID" -ge 9 ]; then
@@ -145,11 +145,11 @@ install_openresty_rhel() {
     fi
 
     echo "[*] 检查更新并安装 OpenResty..."
-    sudo yum check-update
+    sudo yum check-update || true
     sudo yum install -y openresty
 }
 
-
+# 执行安装流程
 case "$OS_ID" in
     ubuntu)
         install_openresty_ubuntu
@@ -168,6 +168,5 @@ case "$OS_ID" in
         exit 1
         ;;
 esac
-
 
 echo "[✓] OpenResty 安装完成！"

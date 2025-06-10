@@ -1,0 +1,9 @@
+version: '3.1'
+
+services:
+  openresty:
+    image: zhiqiangwang/openresty:latest
+    volumes:
+      - ./conf.d/default.conf:/usr/local/openresty/nginx/conf/conf.d/default.conf
+    ports:
+      - "8888:80"

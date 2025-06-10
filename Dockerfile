@@ -21,6 +21,10 @@ COPY lua/lualib/ /usr/local/openresty/lualib/resty/
 # uuid
 COPY lua/uuid.lua /usr/local/openresty/nginx/conf/uuid.lua
 
+# 重制nginx配置文件
+ADD nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+COPY conf.d/default.conf /usr/local/openresty/nginx/conf/conf.d/
+
 # nginx环境变量
 ENV NGINX_CONF_PATH=
 # 将本地的sh录入到docker中

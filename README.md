@@ -9,6 +9,15 @@ curl -sSL https://raw.githubusercontent.com/chihqiang/docker-openresty/main/unin
 docker build -t  zhiqiangwang/openresty:latest  .
 ~~~~
 
+# run defunt.con
+~~~
+docker run -d \
+  --name my-openresty \
+  -p 8888:80 \
+  -v $(pwd)/conf.d/default.conf:/usr/local/openresty/nginx/conf/conf.d/default.conf \
+  zhiqiangwang/openresty:latest
+~~~
+
 # luarocks包管理
 
 ~~~

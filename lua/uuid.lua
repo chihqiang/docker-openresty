@@ -8,6 +8,8 @@
 -- 
 -- curl -fSL https://raw.githubusercontent.com/cloudflare/lua-resty-cookie/master/lib/resty/cookie.lua -o /usr/local/openresty/lualib/resty/cookie.lua
 -- 
+
+-- curl -fSL https://raw.githubusercontent.com/chihqiang/docker-openresty/main/lua/uuid.lua -o /usr/local/openresty/nginx/conf/uuid.lua
 -- 
 -- 将此文件放在/usr/local/openresty/nginx/conf/目录下
 -- http {
